@@ -1,4 +1,4 @@
-# ShellcodeSocket-powerShell
+# ShellcodeSocket-PowerShell
 
 
 O QUE ESSE CÓDIGO FAZ?
