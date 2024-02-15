@@ -9,7 +9,7 @@ section .text
 
 WinMain:
     start:
-        add rsp, 0xfffffffffffffdf8; # Avoid Null Byte
+        add rsp, 0xfffffffffffffdf8; # Bytes zerados
         ; Obtem o endereço base do kernel32.dll 
         call Locate_kernel32
 
